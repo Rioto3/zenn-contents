@@ -1,6 +1,6 @@
 ---
 title: "GPTsでNotion APIを叩くようにしてみたらやばかった"
-emoji: "🧨"
+emoji: "🔨"
 type: "tech"
 topics:
   - "notion"
@@ -38,7 +38,7 @@ Notion は、開発者が Notion のデータを操作し、外部アプリケ�
 
 
 
-## 追記
+**追記**
 
 OAuth を使ってノーコードで使用できる GPTs を新しく作りました。
 
@@ -47,8 +47,12 @@ ChatGPT のウェブクライアントからログインするだけで Notion �
 https://twitter.com/yutakobayashi__/status/1724481251783139805
 
 
-> 💡 ログイン後に「Couldn't log in with plugin.」というエラーが出た場合は、言語設定を `en-US` にすると直る事が多いです。
 
+:::message
+💡 ログイン後に「Couldn't log in with plugin.」というエラーが出た場合は、言語設定を `en-US` にすると直る事が多いです。
+
+https://community.openai.com/t/error-couldnt-log-in-with-plugin/386433
+:::
 
 
 
@@ -65,23 +69,32 @@ https://twitter.com/yutakobayashi__/status/1724481251783139805
 
 ### 2. リバースプロキシの設定
 
-Notion API を叩く際には `Notion-Version` ヘッダーが必要ですが、ChatGPT の Web UI では Authentication ヘッダーしか追加できません。
+Notion API を叩く際には、headers に、 `Notion-Version` をセットし、API バージョンを渡してあげる必要があります。
 
-そのため、Cloudflare Workers を使って以下のようなリバースプロキシを作成しました：
+しかし、ChatGPT の Web UI 上では Authentication ヘッダーしか追加できません。
+
+そこで、Cloudflare Workers を使ってリバースプロキシを作ることにしました。
 
 ```
 https://reverse-proxy.yutakobayashi.workers.dev/<url>
 ```
 
-このプロキシは `api.notion.com` にアクセスされたときだけ `Notion-Version` ヘッダーを追加するだけのものですが、不安であれば以下の GitHub リポジトリにコードが公開されているので、自分でホストして使うことも可能です：
+ただ `api.notion.com` にアクセスされたときだけヘッダーを追加するだけのプロキシですが、不安であればリポジトリにコードがあるので自分でホストするのがいいと思います。
 
-[https://github.com/yutakobayashidev/workers/blob/main/workers/reverse-proxy/src/index.ts](https://github.com/yutakobayashidev/workers/blob/main/workers/reverse-proxy/src/index.ts)
+https://github.com/yutakobayashidev/workers/blob/65be244b7afd5aaa360883cb1d89d6457a0d7df1/workers/reverse-proxy/src/index.ts
+
+
 
 ### 3. GPTs の設定
 
-GPTs の設定画面の「Configure」から、「Actions」を選択します。
+GPTs の設定画面の Configure から、下から二番目の Actions を選択します。
 
-OpenAPI のスキーマとして以下のような形式を指定します（このスキーマも GPT に手伝ってもらいながら作成されました）：
+OpenAPI のスキーマとして、例として今回は以下のような記載をしました。ちなみにこのスキーマ自体も大半 GPT に作ってもらいました。
+
+(長いのでアコーディオンの中)
+
+
+:::details タイトル
 
 ```json
 {
@@ -185,13 +198,35 @@ OpenAPI のスキーマとして以下のような形式を指定します（こ
 }
 ```
 
+:::
 
 
+また、Authentication を選択し、API Key、Bearer として控えた API キーを登録します。
 
+あとはシステムメッセージなどを雑に登録するだけです 🎉
 
+Instructions の例:
 
+```
 
+この GPTs は、Notion データベースを自然言語クエリで検索するために設計されています。膨大な Notion ページから関連する情報を効率的に検索します。英語と日本語の両方のクエリを理解できるようにプログラムされており、多様なユーザがアクセスできるようになっています。
 
+GPT は、Notion データベースから正確で文脈に沿った情報を提供することに重点を置いており、迅速で信頼性の高いデータを求める従業員や関係者にとって、非常に貴重なツールとなっています。GPT は、データのプライバシーとセキュリティの制約の中で運用され、機密情報が細心の注意を払って取り扱われることを保証します。また、簡潔で有益な回答を提供し、必要に応じてクエリを明確にして検索結果の精度を高めることができます。
+
+検索 API とページのコンテンツ読み取りをうまく組み合わせてください。
+
+また、特にユーザーの希望がない場合、以下のような形態でレスポンスしてください。
+
+## ページタイトル
+
+- 作成日
+- 最終更新日
+- 各プロパティ情報の要約
+- Noiton の URL
+
+{AI が考える概要}
+
+```
 
 
 
