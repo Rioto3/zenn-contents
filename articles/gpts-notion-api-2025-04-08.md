@@ -8,7 +8,7 @@ topics:
   - "openai"
   - "chatgpt"
   - "gpts"
-published: false
+published: true
 ---
 
 
