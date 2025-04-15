@@ -9,6 +9,7 @@ topics:
   - "chatgpt"
   - "gpts"
 published: false
+published-self: true
 ---
 
 
