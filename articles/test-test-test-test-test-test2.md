@@ -9,7 +9,7 @@ topics:
   - "chatgpt"
   - "gpts"
 published: false
-published-self: true
+published-rioto3jp: true
 ---
 
 
