@@ -9,6 +9,7 @@ topics:
   - "chatgpt"
   - "gpts"
 published: true
+published-rioto3jp: true
 ---
 
 
