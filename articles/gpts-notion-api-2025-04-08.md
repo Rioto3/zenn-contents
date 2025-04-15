@@ -15,7 +15,7 @@ published-rioto3jp: true
 
 ## はじめに
 
-Notion公式のMCPが公開され、私も即座に取り込みましたが、もうこれがないとダメな体になってきました。
+Notion公式のMCPが公開され、私も即座に取り込みましたが、もうこれがないとダメになってきました。
 
 https://www.youtube.com/watch?v=NMmDnYKD0fE
 
